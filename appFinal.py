@@ -309,7 +309,8 @@ def genPDFLocal():
     # Dimensiones Cambiaron definido como "custom_size = (294*mm,298*mm)" y en milimetros
     fotoia = ImageReader('./Static/foto_detectada.jpg')
     # c.drawImage(fotoia, 17 * mm, 166.45 * mm , width= 177 * mm ,  height= 119 * mm, preserveAspectRatio=False)
-    c.drawImage(fotoia, 32 * mm, 165.45 * mm , width= 145 * mm ,  height= 119 * mm, preserveAspectRatio=False)
+    # c.drawImage(fotoia, 32 * mm, 165.45 * mm , width= 145 * mm ,  height= 119 * mm, preserveAspectRatio=False)
+    c.drawImage(fotoia, 32 * mm, 110 * mm , width= 140 * mm ,  height= 200 * mm, preserveAspectRatio=False)
 
     bg = Image.open("./imagesPDF/fondo_v1.png")
     bg.save("./imagesPDF/fondo_tranparente.png")
