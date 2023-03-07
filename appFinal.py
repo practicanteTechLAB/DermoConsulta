@@ -125,19 +125,19 @@ def comparacionesActivos():
     if((p0 == "Tirante") and (p1 == "Tirante") and (p2 == "Tirante") and (p3 == "No") and (p4 == "Si")):
         varTipoPiel = "Piel Seca"
 
-    if((p0 == "Tirante") and (p1 == "Tirante") and (p2 == "Tirante") and (p3 == "No") and (p4 == "No")):
+    if((p0 == "Tirante") and (p1 == "Tirante") and (p2 == "Tirante") and (p3 == "No") and ((p4 == "No") or (p4 == "N/A"))):
         varTipoPiel = "Piel Seca"
 
     if((p0 == "Tirante") and (p1 == "Tirante") and (p2 == "Oleosa") and (p3 == "Si") and (p4 == "Si")):
         varTipoPiel = "Piel Mixta-Sensible"
 
-    if((p0 == "Tirante") and (p1 == "Tirante") and (p2 == "Oleosa") and (p3 == "Si") and (p4 == "No")):
+    if((p0 == "Tirante") and (p1 == "Tirante") and (p2 == "Oleosa") and (p3 == "Si") and ((p4 == "No") or (p4 == "N/A"))):
         varTipoPiel = "Piel Mixta-Sensible"
 
     if((p0 == "Tirante") and (p1 == "Tirante") and (p2 == "Oleosa") and (p3 == "No") and (p4 == "Si")):
         varTipoPiel = "Piel Mixta"
 
-    if((p0 == "Tirante") and (p1 == "Tirante") and (p2 == "Oleosa") and (p3 == "No") and (p4 == "No")):
+    if((p0 == "Tirante") and (p1 == "Tirante") and (p2 == "Oleosa") and (p3 == "No") and ((p4 == "No") or (p4 == "N/A"))):
         varTipoPiel = "Piel Mixta"
 
     # if((p0 == "Tirante") and (p1 == "Oleosa") and (p2 == "Tirante") and (p3 == "Si") and (p4 == "Si")):
@@ -312,7 +312,7 @@ def genPDFLocal():
     # c.drawImage(fotoia, 32 * mm, 165.45 * mm , width= 145 * mm ,  height= 119 * mm, preserveAspectRatio=False)
     c.drawImage(fotoia, 32 * mm, 110 * mm , width= 140 * mm ,  height= 200 * mm, preserveAspectRatio=False)
 
-    bg = Image.open("./imagesPDF/fondo_v1.png")
+    bg = Image.open("./imagesPDF/fondo_v0.png")
     bg.save("./imagesPDF/fondo_tranparente.png")
     bg = ImageReader("./imagesPDF/fondo_tranparente.png")
     width, height = bg.getSize()
