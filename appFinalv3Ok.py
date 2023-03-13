@@ -8,7 +8,7 @@ import shutil                # Eliminacion de carpetas de sistema operativo
 from shutil import rmtree
 import os                    # Manejo del sistema operativo
 import boto3                 # Para el servicio de predicción de edad
-import requests              # Para controlar sistema operativo
+import requests, time              # Para controlar sistema operativo
 
 import torch                                  
 from flask import Flask, jsonify, render_template # Lib para crear el servidor web
@@ -33,15 +33,6 @@ def predictUrl(url):
         img = Image.open(io.BytesIO(response.content)).convert("RGB")
         img.save("./images/foto_descargada.jpg")
 
-        # Capturar la respuestas a las preguntas capturadas en el BOT
-        dataJSON = request.json
-        global p0, p1, p2, p3, p4
-        p0 = dataJSON["pregunta_1"]
-        p1 = dataJSON["pregunta_2"]
-        p2 = dataJSON["pregunta_3"]
-        p3 = dataJSON["pregunta_4"]
-        p4 = dataJSON["pregunta_5"]
-
         results = model(img, size=640) # Pasa la imagen al modelo con un tamaño de imagen de 640px de ancho
         results.save() # Guarda la imagen con la deteccion en la carpeta run/detect/exp
 
@@ -52,9 +43,10 @@ def predictUrl(url):
         data = results.pandas().xyxy[0] # Se almacenan los parametros de detección
 
         # Generar la url del PDF generado
-        urlsended = url_for('static', filename='Pdf_consulta.pdf')
-        age()
-        global imperfeccionValue
+        urlsended = url_for('static', filename='Pdf_consulta_'+str(request.json["celular"])+'.pdf')
+        prom=age()
+        #global imperfeccionValue
+        inperfeccionValue=""
 
         if(len(data) == 0):
             responder = {'nameURL': urlsended, 'Tipo Imperfección': "Rostro bien cuidado (No tienes imperfecciones)",
@@ -82,16 +74,18 @@ def predictUrl(url):
             if(data.values[1][6] == "Acne"):
                 imperfeccionValue = "Acné"
 
-        comparacionesActivos()
-        principiosActivos()
+        varTipoPiel=comparacionesActivos()
+        v1,v2,v3,v4,v5,v6,v7,v8,v9,v10,rec=principiosActivos(varTipoPiel)
 
-        genPDFLocal()
+        genPDFLocal(imperfeccionValue,prom,varTipoPiel,v1,v2,v3,v4,v5,v6,v7,v8,v9,v10,rec)
+        time.sleep(2)
+        #resetVars()
         return jsonify(responder) # Envia el PDF generado con la imagen y valor de la detección en campo DetectionVal
-
 # Método para cargar la imagen que se va a analizar
 def age():
         photo= './images/foto_descargada.jpg'
         face_count=detect_faces(photo)
+        return face_count
 # Método para consumir servicio en AWS en el cual se realiza el promedio de la edad
 def detect_faces(photo):
     # Conexión al servicio de AWS key
@@ -106,15 +100,21 @@ def detect_faces(photo):
     for faceDetail in response['FaceDetails']:
         age_hight = faceDetail['AgeRange']['High']
         age_low = faceDetail['AgeRange']['Low']
-        global prom
+        #global prom
         prom = (age_hight + age_low)/2
         prom = int(prom)
-
     return prom
 # Método para la comparación de las variables capturadas por el bot para asignar el valor de tipo de piel
 def comparacionesActivos():
-    # global p0, p1, p2, p3, p4
-    global varTipoPiel
+    dataJSON = request.json
+    p0 = dataJSON["pregunta_1"]
+    p1 = dataJSON["pregunta_2"]
+    p2 = dataJSON["pregunta_3"]
+    p3 = dataJSON["pregunta_4"]
+    p4 = dataJSON["pregunta_5"]
+
+    #global varTipoPiel
+    varTipoPiel = ""
 
     if((p0 == "Tirante") and (p1 == "Tirante") and (p2 == "Tirante") and (p3 == "Si") and (p4 == "Si")):
         varTipoPiel = "Piel Seca-Sensible"
@@ -211,12 +211,24 @@ def comparacionesActivos():
 
     if((p0 == "Oleosa") and (p1 == "Oleosa") and (p2 == "Oleosa") and (p3 == "No") and (p4 == "No")):
         varTipoPiel = "Piel Grasa"
-# Método para los activos dependiendo del valor que tenga asignada la variable tipo de piel
-def principiosActivos():
-    global v1,v2,v3,v4,v5,v6,v7,v8,v9,v10,rec
-    tipoPiel = varTipoPiel
+    return varTipoPiel
 
-    if (tipoPiel == "Piel Grasa"):
+# Método para los activos dependiendo del valor que tenga asignada la variable tipo de piel
+def principiosActivos(varTipoPiel):
+    #global v1,v2,v3,v4,v5,v6,v7,v8,v9,v10,rec
+    v1 = ""
+    v2 = ""
+    v3 = ""
+    v4 = ""
+    v5 = ""
+    v6 = ""
+    v7 = ""
+    v8 = ""
+    v9 = ""
+    v10 = ""
+    rec = ""
+
+    if (varTipoPiel == "Piel Grasa"):
         v1 = "Ácido glicólico"
         v2 = "Vitamina C"
         v3 = "Ácido salicílico"
@@ -229,7 +241,7 @@ def principiosActivos():
         v10 = ""
         rec = "Se recomienda utilizar una rutina de limpieza dos veces al día tipo espuma, gel o loción, hidratación, tratamiento anti acné y fotoprotección"
 
-    if (tipoPiel == "Piel Grasa-Sensible"):
+    if (varTipoPiel == "Piel Grasa-Sensible"):
         v1 = "Retinol"
         v2 = "Vitamina C, B5, E"
         v3 = "Niacinamida"
@@ -242,7 +254,7 @@ def principiosActivos():
         v10 = ""
         rec = "Se recomienda utilizar una rutina de limpieza para disminuir la oleosidad, calma la piel con un tónico, aplicar una hidratante específica para pieles grasas y sensibles, indispensable fotoproteger la piel"
 
-    if (tipoPiel == "Piel Seca"):
+    if (varTipoPiel == "Piel Seca"):
         v1 = "Retinol"
         v2 = "Vitamina C, B5, E"
         v3 = "Niacinamida"    
@@ -255,7 +267,7 @@ def principiosActivos():
         v10 = ""
         rec = "Se recomienda mantener una rutina diaria de limpieza y mantener una hidratación durante la mañana y en la noche para proteger la piel de agresiones. No olvides fotoproteger."
 
-    if (tipoPiel == "Piel Seca-Sensible"):
+    if (varTipoPiel == "Piel Seca-Sensible"):
         v1 = "Vitamina C, B5, E"
         v2 = "Niacinamida"    
         v3 = "Ácido láctico"
@@ -268,7 +280,7 @@ def principiosActivos():
         v10 = ""
         rec = "Se recomienda mantener una rutina diaria de limpieza utilizando productos que protejan la piel de agresiones externas, evita frotar la piel por que son movimientos que puede irritar la piel. Es fundamental mantener una hidratación en la mañana y en la noche para mejorar el aspecto de la piel y aumentar el umbral de tolerancia de la piel. No olvides fotoproteger."
 
-    if (tipoPiel == "Piel Mixta"):
+    if (varTipoPiel == "Piel Mixta"):
         v1 = "Ácido glicólico"
         v2 = "Retinol"
         v3 = "Vitamina C, B5"
@@ -281,7 +293,7 @@ def principiosActivos():
         v10 = "AHA's"
         rec = "Se recomienda utilizar una rutina de limpieza dos veces al día tipo espuma, gel o loción, hidratación y fotoprotección."
 
-    if (tipoPiel == "Piel Mixta-Sensible"):
+    if (varTipoPiel == "Piel Mixta-Sensible"):
         v1 = "Retinol"
         v2 = "Vitamina C, B5, E"
         v3 = "Niacinamida"
@@ -293,13 +305,15 @@ def principiosActivos():
         v9 = "Ceramidas"
         v10 = ""
         rec = "Se recomienda utilizar productos de limpieza adecuados para tu tipo de piel en especial agua micelar o tónicos, adicionalmente productos que ayuden a minimizar los poros en la zona T y aplicar hidratante tipo textura serum, gel o emulsión. No olvides fotoproteger la piel."
+    return v1,v2,v3,v4,v5,v6,v7,v8,v9,v10,rec
+
 # Método para generar el PDF final de diagnóstico usando ReportLAB Python
-def genPDFLocal():
+def genPDFLocal(imperfeccionValue,prom,varTipoPiel,v1,v2,v3,v4,v5,v6,v7,v8,v9,v10,rec):
     custom_size = (330*mm,339*mm)
     i = mm
     d = i/4
     w, h = custom_size
-    c = canvas.Canvas("./Static/Pdf_consulta.pdf",pagesize=custom_size)
+    c = canvas.Canvas("./Static/Pdf_consulta_"+str(request.json["celular"])+".pdf",pagesize=custom_size)
 
     c.setFont("Helvetica", 15)
     #Cambiar el Color del Fondo
@@ -361,23 +375,23 @@ def genPDFLocal():
 
         #¿Cómo siente su piel al levantarse?
     c.setFillColorRGB(0.25,0.32,0.12,1)
-    c.drawString(242.61 * mm , 257.34 * mm, p0)
+    c.drawString(242.61 * mm , 257.34 * mm, request.json["pregunta_1"])
         
         #¿Cómo es la textura de su piel en frente y mentón?
     c.setFillColorRGB(0.25,0.32,0.12,1)
-    c.drawString(242.61 * mm , 236.53 * mm, p1)
+    c.drawString(242.61 * mm , 236.53 * mm, request.json["pregunta_2"])
 
         #¿Cómo es la textura de su piel en mejillas?
     c.setFillColorRGB(0.25,0.32,0.12,1)
-    c.drawString(242.61 * mm , 216.77 * mm, p2)
+    c.drawString(242.61 * mm , 216.77 * mm, request.json["pregunta_3"])
 
         #¿Siente alguna sensibilidad?
     c.setFillColorRGB(0.25,0.32,0.12,1)
-    c.drawString(247.73 * mm , 177.36 * mm, p3)
+    c.drawString(247.73 * mm , 177.36 * mm, request.json["pregunta_4"])
 
         #¿Le dura el maquillaje?
     c.setFillColorRGB(0.25,0.32,0.12,1)
-    c.drawString(247.73 * mm , 196.31 * mm, p4)
+    c.drawString(247.73 * mm , 196.31 * mm, request.json["pregunta_5"])
     #___________________________________________________________
         #La edad de su piel es    
     c.setFillColorRGB(0.25,0.32,0.12,1)
@@ -429,6 +443,21 @@ def genPDFLocal():
 
     c.showPage()
     c.save()
+
+def resetVars():
+    global varTipoPiel,v1,v2,v3,v4,v5,v6,v7,v8,v9,v10,rec
+    varTipoPiel = ""
+    v1 = ""
+    v2 = ""
+    v3 = ""
+    v4 = ""
+    v5 = ""
+    v6 = ""
+    v7 = ""
+    v8 = ""
+    v9 = ""
+    v10 = ""
+    rec = ""
 
 @application.route('/none') # Ruta para prueba de funcionamiento,  Solo muestra el memsaje de hola en el navegador
 def none():
