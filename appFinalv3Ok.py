@@ -103,6 +103,8 @@ def detect_faces(photo):
         #global prom
         prom = (age_hight + age_low)/2
         prom = int(prom)
+        if (prom < 15):
+            prom = prom + 18
     return prom
 # Método para la comparación de las variables capturadas por el bot para asignar el valor de tipo de piel
 def comparacionesActivos():
