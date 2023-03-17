@@ -31,14 +31,14 @@ def predictUrl(url):
         # Lee el archivo
         response = requests.get(url)
         img = Image.open(io.BytesIO(response.content)).convert("RGB")
-        img.save("./images/foto_descargada.jpg")
+        # img.save("./images/foto_descargada.jpg")
 
         results = model(img, size=640) # Pasa la imagen al modelo con un tamaño de imagen de 640px de ancho
         results.save() # Guarda la imagen con la deteccion en la carpeta run/detect/exp
 
-        contenido = os.listdir('./runs/detect/exp') # Almacena el nombre de la imagen en contenido, posicion 0
-        shutil.copy("./runs/detect/exp/"+contenido[0], "./static/foto_detectada.jpg") # Copia la imagen a la carpeta static con el nombre "foto_detectada.jpg"
-        rmtree("./runs/detect/exp") # Se elimina la carpeta runs con sus respectivas subcarpetas
+        contenido = os.listdir('.\\runs\\detect\\exp') # Almacena el nombre de la imagen en contenido, posicion 0
+        shutil.copy('.\\runs\\detect\\exp\\'+contenido[0], '.\\static\\foto_detectada.jpg') # Copia la imagen a la carpeta static con el nombre "foto_detectada.jpg"
+        rmtree('.\\runs\\detect\\exp') # Se elimina la carpeta runs con sus respectivas subcarpetas
 
         data = results.pandas().xyxy[0] # Se almacenan los parametros de detección
 
@@ -83,7 +83,8 @@ def predictUrl(url):
         return jsonify(responder) # Envia el PDF generado con la imagen y valor de la detección en campo DetectionVal
 # Método para cargar la imagen que se va a analizar
 def age():
-        photo= './images/foto_descargada.jpg'
+        # photo= './images/foto_descargada.jpg'
+        photo= './Static/foto_detectada.jpg'
         face_count=detect_faces(photo)
         return face_count
 # Método para consumir servicio en AWS en el cual se realiza el promedio de la edad
