@@ -12,7 +12,7 @@ import requests, time              # Para controlar sistema operativo
 
 import torch                                  
 from flask import Flask, jsonify, render_template # Lib para crear el servidor web
-from flask_ngrok import run_with_ngrok # Lib para crear la URL publica 
+from flask_ngrok2 import run_with_ngrok # Lib para crear la URL publica 
 from flask import url_for
 from flask import request    # Manejo de métodos de captura de APIs
 
@@ -23,7 +23,7 @@ from reportlab.lib.units import mm
 from reportlab.lib.utils import simpleSplit
 
 application = Flask(__name__)
-run_with_ngrok(application) # Linea para indicar que se arrancara el servidor con Ngrok
+run_with_ngrok(application,auth_token='2MTWAtTixWlpiafauqHtI3pqOmv_3uWGUeJqGpr8QDvstghhr') # Linea para indicar que se arrancara el servidor con Ngrok
 
 @application.route("/send-image2/<path:url>", methods=['POST']) # Se asigna la direccion y se indica que admite el metodo POST
 def predictUrl(url):
@@ -36,9 +36,9 @@ def predictUrl(url):
         results = model(img, size=640) # Pasa la imagen al modelo con un tamaño de imagen de 640px de ancho
         results.save() # Guarda la imagen con la deteccion en la carpeta run/detect/exp
 
-        contenido = os.listdir('.\\runs\\detect\\exp') # Almacena el nombre de la imagen en contenido, posicion 0
-        shutil.copy('.\\runs\\detect\\exp\\'+contenido[0], '.\\static\\foto_detectada.jpg') # Copia la imagen a la carpeta static con el nombre "foto_detectada.jpg"
-        rmtree('.\\runs\\detect\\exp') # Se elimina la carpeta runs con sus respectivas subcarpetas
+        contenido = os.listdir('./runs/detect/exp') # Almacena el nombre de la imagen en contenido, posicion 0
+        shutil.copy('./runs/detect/exp/'+contenido[0], './static/foto_detectada.jpg') # Copia la imagen a la carpeta static con el nombre "foto_detectada.jpg"
+        rmtree('./runs/detect/exp') # Se elimina la carpeta runs con sus respectivas subcarpetas
 
         data = results.pandas().xyxy[0] # Se almacenan los parametros de detección
 
