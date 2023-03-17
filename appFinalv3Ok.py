@@ -37,7 +37,7 @@ def predictUrl(url):
         results.save() # Guarda la imagen con la deteccion en la carpeta run/detect/exp
 
         contenido = os.listdir('./runs/detect/exp') # Almacena el nombre de la imagen en contenido, posicion 0
-        shutil.copy('./runs/detect/exp/'+contenido[0], './static/foto_detectada.jpg') # Copia la imagen a la carpeta static con el nombre "foto_detectada.jpg"
+        shutil.copy('./runs/detect/exp/'+contenido[0], './Static/foto_detectada.jpg') # Copia la imagen a la carpeta static con el nombre "foto_detectada.jpg"
         rmtree('./runs/detect/exp') # Se elimina la carpeta runs con sus respectivas subcarpetas
 
         data = results.pandas().xyxy[0] # Se almacenan los parametros de detección
