@@ -37,7 +37,7 @@ def predictUrl(url):
         results.save() # Guarda la imagen con la deteccion en la carpeta run/detect/exp
 
         contenido = os.listdir('./runs/detect/exp') # Almacena el nombre de la imagen en contenido, posicion 0
-        shutil.copy('./runs/detect/exp/'+contenido[0], './Static/foto_detectada.jpg') # Copia la imagen a la carpeta static con el nombre "foto_detectada.jpg"
+        shutil.copy('./runs/detect/exp/'+contenido[0], './static/foto_detectada.jpg') # Copia la imagen a la carpeta static con el nombre "foto_detectada.jpg"
         rmtree('./runs/detect/exp') # Se elimina la carpeta runs con sus respectivas subcarpetas
 
         data = results.pandas().xyxy[0] # Se almacenan los parametros de detección
@@ -84,7 +84,7 @@ def predictUrl(url):
 # Método para cargar la imagen que se va a analizar
 def age():
         # photo= './images/foto_descargada.jpg'
-        photo= './Static/foto_detectada.jpg'
+        photo= './static/foto_detectada.jpg'
         face_count=detect_faces(photo)
         return face_count
 # Método para consumir servicio en AWS en el cual se realiza el promedio de la edad
@@ -316,7 +316,7 @@ def genPDFLocal(imperfeccionValue,prom,varTipoPiel,v1,v2,v3,v4,v5,v6,v7,v8,v9,v1
     i = mm
     d = i/4
     w, h = custom_size
-    c = canvas.Canvas("./Static/Pdf_consulta_"+str(request.json["celular"])+".pdf",pagesize=custom_size)
+    c = canvas.Canvas("./static/Pdf_consulta_"+str(request.json["celular"])+".pdf",pagesize=custom_size)
 
     c.setFont("Helvetica", 15)
     #Cambiar el Color del Fondo
@@ -324,7 +324,7 @@ def genPDFLocal(imperfeccionValue,prom,varTipoPiel,v1,v2,v3,v4,v5,v6,v7,v8,v9,v1
     c.rect(0, 0, w, h, fill=1, stroke=0)
 
     # Dimensiones Cambiaron definido como "custom_size = (294*mm,298*mm)" y en milimetros
-    fotoia = ImageReader('./Static/foto_detectada.jpg')
+    fotoia = ImageReader('./static/foto_detectada.jpg')
     # c.drawImage(fotoia, 17 * mm, 166.45 * mm , width= 177 * mm ,  height= 119 * mm, preserveAspectRatio=False)
     # c.drawImage(fotoia, 32 * mm, 165.45 * mm , width= 145 * mm ,  height= 119 * mm, preserveAspectRatio=False)
     c.drawImage(fotoia, 32 * mm, 110 * mm , width= 140 * mm ,  height= 200 * mm, preserveAspectRatio=False)
