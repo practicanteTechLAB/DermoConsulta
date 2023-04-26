@@ -9,10 +9,11 @@ from shutil import rmtree
 import os                    # Manejo del sistema operativo
 import boto3                 # Para el servicio de predicción de edad
 import requests, time              # Para controlar sistema operativo
+import datetime
 
-import torch                                  
+import torch
 from flask import Flask, jsonify, render_template # Lib para crear el servidor web
-from flask_ngrok2 import run_with_ngrok # Lib para crear la URL publica 
+from flask_ngrok2 import run_with_ngrok # Lib para crear la URL publica
 from flask import url_for
 from flask import request    # Manejo de métodos de captura de APIs
 
@@ -23,7 +24,7 @@ from reportlab.lib.units import mm
 from reportlab.lib.utils import simpleSplit
 
 application = Flask(__name__)
-run_with_ngrok(application,auth_token='2MTWAtTixWlpiafauqHtI3pqOmv_3uWGUeJqGpr8QDvstghhr') # Linea para indicar que se arrancara el servidor con Ngrok
+run_with_ngrok(application,auth_token='2JptMb6IwVP0TlvTDfl77WG9pPl_4hAXcfFXxYqMEQ2RdN31e') # Linea para indicar que se arrancara el servidor con Ngrok
 
 @application.route("/send-image2/<path:url>", methods=['POST']) # Se asigna la direccion y se indica que admite el metodo POST
 def predictUrl(url):
@@ -31,7 +32,7 @@ def predictUrl(url):
         # Lee el archivo
         response = requests.get(url)
         img = Image.open(io.BytesIO(response.content)).convert("RGB")
-        # img.save("./images/foto_descargada.jpg")
+        img.save("./images/foto_descargada.jpg")
 
         results = model(img, size=640) # Pasa la imagen al modelo con un tamaño de imagen de 640px de ancho
         results.save() # Guarda la imagen con la deteccion en la carpeta run/detect/exp
@@ -68,16 +69,16 @@ def predictUrl(url):
                 imperfeccionValue = str(data.values[0][6])
             else:
                 imperfeccionValue = str(data.values[0][6]) + ", " + str(data.values[1][6])
-            
+
             if(data.values[0][6] == "Acne"):
                 imperfeccionValue = "Acné"
             if(data.values[1][6] == "Acne"):
                 imperfeccionValue = "Acné"
 
         varTipoPiel=comparacionesActivos()
-        v1,v2,v3,v4,v5,v6,v7,v8,v9,v10,rec=principiosActivos(varTipoPiel)
+        v1,v2,v3,v4,v5,v6,v7,v8,v9,v10,rec,rec2=principiosActivos(varTipoPiel)
 
-        genPDFLocal(imperfeccionValue,prom,varTipoPiel,v1,v2,v3,v4,v5,v6,v7,v8,v9,v10,rec)
+        genPDFLocal(imperfeccionValue,prom,varTipoPiel,v1,v2,v3,v4,v5,v6,v7,v8,v9,v10,rec,rec2)
         time.sleep(2)
         #resetVars()
         return jsonify(responder) # Envia el PDF generado con la imagen y valor de la detección en campo DetectionVal
@@ -97,7 +98,7 @@ def detect_faces(photo):
     # Usa el método de detección de rostro
     with open(photo, 'rb') as image:
         response = client.detect_faces(Image={'Bytes': image.read()}, Attributes=['ALL'])
-    # Usa FaceDetails para estimar el rango de edad alto y bajo de la imagen y sacar un promedio        
+    # Usa FaceDetails para estimar el rango de edad alto y bajo de la imagen y sacar un promedio
     for faceDetail in response['FaceDetails']:
         age_hight = faceDetail['AgeRange']['High']
         age_low = faceDetail['AgeRange']['Low']
@@ -215,7 +216,6 @@ def comparacionesActivos():
     if((p0 == "Oleosa") and (p1 == "Oleosa") and (p2 == "Oleosa") and (p3 == "No") and (p4 == "No")):
         varTipoPiel = "Piel Grasa"
     return varTipoPiel
-
 # Método para los activos dependiendo del valor que tenga asignada la variable tipo de piel
 def principiosActivos(varTipoPiel):
     #global v1,v2,v3,v4,v5,v6,v7,v8,v9,v10,rec
@@ -230,6 +230,7 @@ def principiosActivos(varTipoPiel):
     v9 = ""
     v10 = ""
     rec = ""
+    rec2 = ""
 
     if (varTipoPiel == "Piel Grasa"):
         v1 = "Ácido glicólico"
@@ -243,6 +244,7 @@ def principiosActivos(varTipoPiel):
         v9 = ""
         v10 = ""
         rec = "Se recomienda utilizar una rutina de limpieza dos veces al día tipo espuma, gel o loción, hidratación, tratamiento anti acné y fotoprotección"
+        rec2 = "Oleosidad en todo el rostro, no solo en la zona T. Poros dilatados o visibles y pueden aparecer brotes de acné, espinillas y otras imperfecciones"
 
     if (varTipoPiel == "Piel Grasa-Sensible"):
         v1 = "Retinol"
@@ -256,11 +258,12 @@ def principiosActivos(varTipoPiel):
         v9 = ""
         v10 = ""
         rec = "Se recomienda utilizar una rutina de limpieza para disminuir la oleosidad, calma la piel con un tónico, aplicar una hidratante específica para pieles grasas y sensibles, indispensable fotoproteger la piel"
+        rec2 = "Oleosidad en todo el rostro, no solo en la zona T. Poros dilatados o visibles y pueden aparecer brotes de acné, espinillas, resequedad, molestia, rigidez, tirantez, picor, ardor y otras imperfecciones"
 
     if (varTipoPiel == "Piel Seca"):
         v1 = "Retinol"
         v2 = "Vitamina C, B5, E"
-        v3 = "Niacinamida"    
+        v3 = "Niacinamida"
         v4 = "Ácido láctico"
         v5 = "Ácido hialurónico"
         v6 = "Agua termal"
@@ -268,11 +271,12 @@ def principiosActivos(varTipoPiel):
         v8 = "AHA's"
         v9 = ""
         v10 = ""
-        rec = "Se recomienda mantener una rutina diaria de limpieza y mantener una hidratación durante la mañana y en la noche para proteger la piel de agresiones. No olvides fotoproteger."
+        rec = "Se recomienda mantener una rutina diaria de limpieza y mantener una hidratación durante la mañana y en la noche para proteger la piel de agresiones. No olvides fotoproteger"
+        rec2 = "Sensación de tirantez en todo el rostro, los poros son casi imperceptibles, además de agua carece de lípidos y dependiendo de la sequedad será escamosa"
 
     if (varTipoPiel == "Piel Seca-Sensible"):
         v1 = "Vitamina C, B5, E"
-        v2 = "Niacinamida"    
+        v2 = "Niacinamida"
         v3 = "Ácido láctico"
         v4 = "Ácido hialurónico"
         v5 = "Agua termal"
@@ -281,7 +285,8 @@ def principiosActivos(varTipoPiel):
         v8 = "Ceramidas"
         v9 = ""
         v10 = ""
-        rec = "Se recomienda mantener una rutina diaria de limpieza utilizando productos que protejan la piel de agresiones externas, evita frotar la piel por que son movimientos que puede irritar la piel. Es fundamental mantener una hidratación en la mañana y en la noche para mejorar el aspecto de la piel y aumentar el umbral de tolerancia de la piel. No olvides fotoproteger."
+        rec = "Se recomienda mantener una rutina diaria de limpieza utilizando productos que protejan la piel de agresiones externas, evita frotar la piel por que son movimientos que puede irritar la piel. Es fundamental mantener una hidratación en la mañana y en la noche para mejorar el aspecto de la piel y aumentar el umbral de tolerancia de la piel. No olvides fotoproteger"
+        rec2 = "Sensación de tirantez en todo el rostro, los poros son casi imperceptibles, además de agua carece de lípidos, dependiendo de la sequedad será escamosa y pueden aparecer resequedad, molestia, rigidez, tirantez, picor, ardor y otras imperfecciones"
 
     if (varTipoPiel == "Piel Mixta"):
         v1 = "Ácido glicólico"
@@ -294,7 +299,8 @@ def principiosActivos(varTipoPiel):
         v8 = "Agua termal"
         v9 = "Fotoprotección"
         v10 = "AHA's"
-        rec = "Se recomienda utilizar una rutina de limpieza dos veces al día tipo espuma, gel o loción, hidratación y fotoprotección."
+        rec = "Se recomienda utilizar una rutina de limpieza dos veces al día tipo espuma, gel o loción, hidratación y fotoprotección"
+        rec2 = "Presenta un aspecto brillante sobre todo en la llamada zona T, presenta pómulos con poros imperceptibles y secos"
 
     if (varTipoPiel == "Piel Mixta-Sensible"):
         v1 = "Retinol"
@@ -307,15 +313,28 @@ def principiosActivos(varTipoPiel):
         v8 = "Cafeína"
         v9 = "Ceramidas"
         v10 = ""
-        rec = "Se recomienda utilizar productos de limpieza adecuados para tu tipo de piel en especial agua micelar o tónicos, adicionalmente productos que ayuden a minimizar los poros en la zona T y aplicar hidratante tipo textura serum, gel o emulsión. No olvides fotoproteger la piel."
-    return v1,v2,v3,v4,v5,v6,v7,v8,v9,v10,rec
+        rec = "Se recomienda utilizar productos de limpieza adecuados para tu tipo de piel en especial agua micelar o tónicos, adicionalmente productos que ayuden a minimizar los poros en la zona T y aplicar hidratante tipo textura serum, gel o emulsión. No olvides fotoproteger la piel"
+        rec2 = "Presenta un aspecto brillante sobre todo en la llamada zona T, presenta pómulos con poros imperceptibles, secos y pueden aparecer resequedad, molestia, rigidez, tirantez, picor, ardor y otras imperfecciones"
+    return v1,v2,v3,v4,v5,v6,v7,v8,v9,v10,rec,rec2
 
 # Método para generar el PDF final de diagnóstico usando ReportLAB Python
-def genPDFLocal(imperfeccionValue,prom,varTipoPiel,v1,v2,v3,v4,v5,v6,v7,v8,v9,v10,rec):
-    custom_size = (330*mm,339*mm)
+def genPDFLocal(imperfeccionValue,prom,varTipoPiel,v1,v2,v3,v4,v5,v6,v7,v8,v9,v10,rec,rec2):
+    dataJSON = request.json
+    name_user = dataJSON["nombre_cliente"]
+    experiencia_foto = dataJSON["experiencia_foto"]
+
+    from reportlab.lib.pagesizes import letter
+    from reportlab.pdfgen import canvas # Librerias para la generación del PDF
+    from reportlab.lib.utils import Image
+    from reportlab.lib.utils import ImageReader
+    from reportlab.lib.units import mm
+    from reportlab.lib.utils import simpleSplit
+
+    custom_size = (277.67*mm,490*mm)
     i = mm
     d = i/4
     w, h = custom_size
+    # c = canvas.Canvas("./static/Pdf_consulta_3217293185.pdf",pagesize=custom_size)
     c = canvas.Canvas("./static/Pdf_consulta_"+str(request.json["celular"])+".pdf",pagesize=custom_size)
 
     c.setFont("Helvetica", 15)
@@ -323,26 +342,32 @@ def genPDFLocal(imperfeccionValue,prom,varTipoPiel,v1,v2,v3,v4,v5,v6,v7,v8,v9,v1
     c.setFillColorRGB(1,1,1)
     c.rect(0, 0, w, h, fill=1, stroke=0)
 
-    # Dimensiones Cambiaron definido como "custom_size = (294*mm,298*mm)" y en milimetros
-    fotoia = ImageReader('./static/foto_detectada.jpg')
-    # c.drawImage(fotoia, 17 * mm, 166.45 * mm , width= 177 * mm ,  height= 119 * mm, preserveAspectRatio=False)
-    # c.drawImage(fotoia, 32 * mm, 165.45 * mm , width= 145 * mm ,  height= 119 * mm, preserveAspectRatio=False)
-    c.drawImage(fotoia, 32 * mm, 110 * mm , width= 140 * mm ,  height= 200 * mm, preserveAspectRatio=False)
+    if(experiencia_foto == "Si"):
+        # Dimensiones Cambiaron definido como "custom_size = (294*mm,298*mm)" y en milimetros
+        # fotoia = ImageReader('./static/foto_detectada.jpg')
+        fotoia = ImageReader('./images/foto_descargada.jpg')
+        # c.drawImage(fotoia, 37*mm, 200*mm , width=200*mm ,  height=200*mm, preserveAspectRatio=False)
+        c.drawImage(fotoia, 37*mm, 150*mm , width=200*mm ,  height=270*mm, preserveAspectRatio=False)
 
-    bg = Image.open("./imagesPDF/fondo_v0.png")
+    if(experiencia_foto == "No"):
+        fotoia = ImageReader('./imagesPDF/avatar.PNG')
+        c.drawImage(fotoia, 40*mm, 190*mm , width=200*mm ,  height=200*mm, preserveAspectRatio=False)
+        prom = ""
+
+    bg = Image.open("./imagesPDF/fondo_v1.png")
     bg.save("./imagesPDF/fondo_tranparente.png")
     bg = ImageReader("./imagesPDF/fondo_tranparente.png")
     width, height = bg.getSize()
-    c.drawImage(bg, x= 0, y=0, width=bg._width, height=bg._height, mask='auto')
+    c.drawImage(bg, x= 0, y=0, width=277.67*mm, height=490*mm, mask='auto')
 
-    logok = Image.open("./imagesPDF/logoEficacia.png")
-    logok.save("./imagesPDF/logoEficacia_transparente.png")
-    logok = ImageReader("./imagesPDF/logoEficacia_transparente.png")
-    width, height = logok.getSize()
-    c.drawImage(logok, x = 245.18*mm, y=12.34*mm, width=logok._width, height=logok._height, mask='auto')
+    # logok = Image.open("./imagesPDF/logoEficacia.png")
+    # logok.save("./imagesPDF/logoEficacia_transparente.png")
+    # logok = ImageReader("./imagesPDF/logoEficacia_transparente.png")
+    # width, height = logok.getSize()
+    # c.drawImage(logok, x = 245.18*mm, y=1.34*mm, width=logok._width, height=logok._height, mask='auto')
 
     #_________________________________________________________________________
-    c.setFont("Helvetica", 28)
+    c.setFont("Helvetica-Bold", 28)
     c.setFillColorRGB(0.25,0.32,0.12,1)
     # c.drawString(190.93 * mm , 302.14 * mm, imperfeccionValue)
 
@@ -351,82 +376,99 @@ def genPDFLocal(imperfeccionValue,prom,varTipoPiel,v1,v2,v3,v4,v5,v6,v7,v8,v9,v1
         for line in simpleSplit(text, "Times-Roman", 8, width):
             lines.append(line)
         return lines
-    
-    text = imperfeccionValue
-    width = 100
-    height = 20
-    x = 207.93 * mm
-    y = 302.14 * mm
 
-    for line in text_wrap(text, width):
-        c.drawCentredString(x, y, line)
-        y -= 15
-    #_________________________________________________________________________
-    c.setFont("Helvetica", 14)
-    c.setFillColorRGB(0.25,0.32,0.12,1)
-
+    # text = "varTipoPiel"
     text = varTipoPiel
     width = 160
     height = 10
-    x = 250 * mm 
-    y = 277.2 * mm
+    x = w/2
+    y = 424.5 * mm
 
     for line in text_wrap(text, width):
         c.drawCentredString(x, y, line)
         y -= 15
-    #_________________________________________________________________________
-
-        #¿Cómo siente su piel al levantarse?
-    c.setFillColorRGB(0.25,0.32,0.12,1)
-    c.drawString(242.61 * mm , 257.34 * mm, request.json["pregunta_1"])
-        
-        #¿Cómo es la textura de su piel en frente y mentón?
-    c.setFillColorRGB(0.25,0.32,0.12,1)
-    c.drawString(242.61 * mm , 236.53 * mm, request.json["pregunta_2"])
-
-        #¿Cómo es la textura de su piel en mejillas?
-    c.setFillColorRGB(0.25,0.32,0.12,1)
-    c.drawString(242.61 * mm , 216.77 * mm, request.json["pregunta_3"])
-
-        #¿Siente alguna sensibilidad?
-    c.setFillColorRGB(0.25,0.32,0.12,1)
-    c.drawString(247.73 * mm , 177.36 * mm, request.json["pregunta_4"])
-
-        #¿Le dura el maquillaje?
-    c.setFillColorRGB(0.25,0.32,0.12,1)
-    c.drawString(247.73 * mm , 196.31 * mm, request.json["pregunta_5"])
     #___________________________________________________________
-        #La edad de su piel es    
+        #La edad de su piel es
+    c.setFont("Helvetica-Bold", 28)
     c.setFillColorRGB(0.25,0.32,0.12,1)
     # c.drawString(241 * mm , 157 * mm, str(prom) + " años")
 
-    text = str(prom) + " años"
+    # text = "22"
+    text = str(prom)
     width = 100
     height = 10
-    x = 250 * mm
-    y = 157 * mm
+    x = 218 * mm
+    y = 230 * mm
 
     for line in text_wrap(text, width):
         c.drawCentredString(x, y, line)
         y -= 15
     #___________________________________________________________
-
-    #Parrafo 1 Izquierda
-    c.setFont("Helvetica-Bold", 15)
+        #Nombre del cliente
+    c.setFont("Helvetica-Bold", 20)
     c.setFillColorRGB(0.25,0.32,0.12,1)
-    
-    text = rec
-    width = 310
-    height = 400
-    x = 470
-    y = height - 50
+
+    text = name_user
+    width = 100
+    height = 10
+    x = 650
+    y = 525
 
     for line in text_wrap(text, width):
         c.drawCentredString(x, y, line)
         y -= 15
-        
-    # Parrafo 2 Derecha
-    c.setFont("Helvetica-Bold", 15)
+    #___________________________________________________________
+        #Fecha
+    c.setFont("Helvetica-Bold", 20)
+    c.setFillColorRGB(0.25,0.32,0.12,1)
+    # Obtenemos la fecha y hora actual
+    fecha_actual = datetime.datetime.now()
+    # Convertimos la fecha a una cadena de texto en el formato deseado
+    # fecha_actual_str = fecha_actual.strftime("%d/%m/%Y %H:%M:%S")
+
+    # Definimos una lista de nombres de meses
+    nombres_meses = [
+        "enero", "febrero", "marzo", "abril", "mayo", "junio", 
+        "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"
+    ]
+
+    # Obtenemos el día, el mes y el año como enteros
+    dia = fecha_actual.day
+    mes = fecha_actual.month
+    anio = fecha_actual.year
+
+    # Creamos la cadena de texto con el formato deseado
+    fecha_str = f"{dia} de {nombres_meses[mes - 1]} del {anio}"
+
+    # text = "Abril 21"
+    text = fecha_str
+    # text = fecha_str
+    width = 100
+    height = 10
+    x = 170
+    y = 525
+
+    for line in text_wrap(text, width):
+        c.drawCentredString(x, y, line)
+        y -= 15
+    #___________________________________________________________
+    # Parrafo 1
+    c.setFont("Helvetica", 16)
+    c.setFillColorRGB(0.25,0.32,0.12,1)
+
+    text = rec2
+    width = 245
+    height = 200
+    x = 395
+    y = 425
+
+    for line in text_wrap(text, width):
+        c.drawCentredString(x, y, line)
+        y -= 15
+    #___________________________________________________________
+    # Parrafo 2
+    c.setFont("Helvetica", 16)
+    c.setFillColorRGB(0.25,0.32,0.12,1)
 
     if (v10 == ""):
         text = v1 + ", " + v2 + ", " + v3 + ", " + v4 + ", " + v5 + ", " + v6 + ", " + v7 + ", " + v8 + ", " + v9
@@ -435,15 +477,32 @@ def genPDFLocal(imperfeccionValue,prom,varTipoPiel,v1,v2,v3,v4,v5,v6,v7,v8,v9,v1
     else:
         text = v1 + ", " + v2 + ", " + v3 + ", " + v4 + ", " + v5 + ", " + v6 + ", " + v7 + ", " + v8 + ", " + v9 + ", " + v10
 
-    width = 310
-    height = 240
-    x = 470
-    y = height - 80
+    # text = "Se recomienda utilizar productos de limpieza adecuados para tu tipo de piel en especial agua micelar o tonicos, adicionalmente productos que ayuden a minimizar los poros en la zona T y aplicar hidratante tipo textura semm, gel o emulsión. No olvides fotoproteger la Piel."
+
+    width = 245
+    height = 200
+    x = 395
+    y = 268
 
     for line in text_wrap(text, width):
         c.drawCentredString(x, y, line)
         y -= 15
+    #___________________________________________________________
+    # Parrafo 3
+    c.setFont("Helvetica", 16)
+    c.setFillColorRGB(0.25,0.32,0.12,1)
 
+    text = rec
+    # text = "Se recomienda utilizar productos de limpieza adecuados para tu tipo de piel en especial agua micelar o tonicos, adicionalmente productos que ayuden a minimizar los poros en la zona T y aplicar hidratante tipo textura semm, gel o emulsión. No olvides fotoproteger la Piel."
+    width = 245
+    height = 200
+    x = 395
+    y = 105
+
+    for line in text_wrap(text, width):
+        c.drawCentredString(x, y, line)
+        y -= 15
+    #___________________________________________________________
     c.showPage()
     c.save()
 
