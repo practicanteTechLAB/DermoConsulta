@@ -120,25 +120,25 @@ def comparacionesActivos():
     #global varTipoPiel
     varTipoPiel = ""
 
-    if((p0 == "Tirante") and (p1 == "Tirante") and (p2 == "Tirante") and (p3 == "Si") and (p4 == "Si") or (p4 == "N/A")):
+    if((p0 == "Tirante") and (p1 == "Tirante") and (p2 == "Tirante") and (p3 == "Si") and ((p4 == "Si") or (p4 == "N/A"))):
         varTipoPiel = "Piel Seca-Sensible"
 
     if((p0 == "Tirante") and (p1 == "Tirante") and (p2 == "Tirante") and (p3 == "Si") and ((p4 == "No") or (p4 == "N/A"))):
         varTipoPiel = "Piel Seca-Sensible"
 
-    if((p0 == "Tirante") and (p1 == "Tirante") and (p2 == "Tirante") and (p3 == "No") and (p4 == "Si") or (p4 == "N/A")):
+    if((p0 == "Tirante") and (p1 == "Tirante") and (p2 == "Tirante") and (p3 == "No") and ((p4 == "Si") or (p4 == "N/A"))):
         varTipoPiel = "Piel Seca"
 
     if((p0 == "Tirante") and (p1 == "Tirante") and (p2 == "Tirante") and (p3 == "No") and ((p4 == "No") or (p4 == "N/A"))):
         varTipoPiel = "Piel Seca"
 
-    if((p0 == "Tirante") and (p1 == "Tirante") and (p2 == "Oleosa") and (p3 == "Si") and (p4 == "Si") or (p4 == "N/A")):
+    if((p0 == "Tirante") and (p1 == "Tirante") and (p2 == "Oleosa") and (p3 == "Si") and ((p4 == "Si") or (p4 == "N/A"))):
         varTipoPiel = "Piel Mixta-Sensible"
 
     if((p0 == "Tirante") and (p1 == "Tirante") and (p2 == "Oleosa") and (p3 == "Si") and ((p4 == "No") or (p4 == "N/A"))):
         varTipoPiel = "Piel Mixta-Sensible"
 
-    if((p0 == "Tirante") and (p1 == "Tirante") and (p2 == "Oleosa") and (p3 == "No") and (p4 == "Si") or (p4 == "N/A")):
+    if((p0 == "Tirante") and (p1 == "Tirante") and (p2 == "Oleosa") and (p3 == "No") and ((p4 == "Si") or (p4 == "N/A"))):
         varTipoPiel = "Piel Mixta"
 
     if((p0 == "Tirante") and (p1 == "Tirante") and (p2 == "Oleosa") and (p3 == "No") and ((p4 == "No") or (p4 == "N/A"))):
@@ -159,13 +159,13 @@ def comparacionesActivos():
     if((p0 == "Tirante") and (p1 == "Oleosa") and (p2 == "Oleosa") and (p3 == "Si") and ((p4 == "Si") or (p4 == "N/A"))):
         varTipoPiel = "Piel Grasa-Sensible"
 
-    if((p0 == "Tirante") and (p1 == "Oleosa") and (p2 == "Oleosa") and (p3 == "Si") and (p4 == "No") or (p4 == "N/A")):
+    if((p0 == "Tirante") and (p1 == "Oleosa") and (p2 == "Oleosa") and (p3 == "Si") and ((p4 == "No") or (p4 == "N/A"))):
         varTipoPiel = "Piel Grasa-Sensible"
 
     if((p0 == "Tirante") and (p1 == "Oleosa") and (p2 == "Oleosa") and (p3 == "No") and ((p4 == "Si") or (p4 == "N/A"))):
         varTipoPiel = "Piel Grasa"
 
-    if((p0 == "Tirante") and (p1 == "Oleosa") and (p2 == "Oleosa") and (p3 == "No") and (p4 == "No") or (p4 == "N/A")):
+    if((p0 == "Tirante") and (p1 == "Oleosa") and (p2 == "Oleosa") and (p3 == "No") and ((p4 == "No") or (p4 == "N/A"))):
         varTipoPiel = "Piel Grasa"
 
     # if((p0 == "Oleosa") and (p1 == "Tirante") and (p2 == "Tirante") and (p3 == "Si") and (p4 == "Si")):
@@ -183,13 +183,13 @@ def comparacionesActivos():
     if((p0 == "Oleosa") and (p1 == "Tirante") and (p2 == "Oleosa") and (p3 == "Si") and ((p4 == "Si") or (p4 == "N/A"))):
         varTipoPiel = "Piel Mixta-Sensible"
 
-    if((p0 == "Oleosa") and (p1 == "Tirante") and (p2 == "Oleosa") and (p3 == "Si") and (p4 == "No") or (p4 == "N/A")):
+    if((p0 == "Oleosa") and (p1 == "Tirante") and (p2 == "Oleosa") and (p3 == "Si") and ((p4 == "No") or (p4 == "N/A"))):
         varTipoPiel = "Piel Mixta-Sensible"
 
     if((p0 == "Oleosa") and (p1 == "Tirante") and (p2 == "Oleosa") and (p3 == "No") and ((p4 == "Si") or (p4 == "N/A"))):
         varTipoPiel = "Piel Mixta"
 
-    if((p0 == "Oleosa") and (p1 == "Tirante") and (p2 == "Oleosa") and (p3 == "No") and (p4 == "No") or (p4 == "N/A")):
+    if((p0 == "Oleosa") and (p1 == "Tirante") and (p2 == "Oleosa") and (p3 == "No") and ((p4 == "No") or (p4 == "N/A"))):
         varTipoPiel = "Piel Mixta"
 
     # if((p0 == "Oleosa") and (p1 == "Oleosa") and (p2 == "Tirante") and (p3 == "Si") and (p4 == "Si")):
@@ -207,13 +207,13 @@ def comparacionesActivos():
     if((p0 == "Oleosa") and (p1 == "Oleosa") and (p2 == "Oleosa") and (p3 == "Si") and ((p4 == "Si") or (p4 == "N/A"))):
         varTipoPiel = "Piel Grasa-Sensible"
 
-    if((p0 == "Oleosa") and (p1 == "Oleosa") and (p2 == "Oleosa") and (p3 == "Si") and (p4 == "No") or (p4 == "N/A")):
+    if((p0 == "Oleosa") and (p1 == "Oleosa") and (p2 == "Oleosa") and (p3 == "Si") and ((p4 == "No") or (p4 == "N/A"))):
         varTipoPiel = "Piel Grasa-Sensible"
 
     if((p0 == "Oleosa") and (p1 == "Oleosa") and (p2 == "Oleosa") and (p3 == "No") and ((p4 == "Si") or (p4 == "N/A"))):
         varTipoPiel = "Piel Grasa"
 
-    if((p0 == "Oleosa") and (p1 == "Oleosa") and (p2 == "Oleosa") and (p3 == "No") and (p4 == "No") or (p4 == "N/A")):
+    if((p0 == "Oleosa") and (p1 == "Oleosa") and (p2 == "Oleosa") and (p3 == "No") and ((p4 == "No") or (p4 == "N/A"))):
         varTipoPiel = "Piel Grasa"
     return varTipoPiel
 # Método para los activos dependiendo del valor que tenga asignada la variable tipo de piel
@@ -363,7 +363,7 @@ def genPDFLocal(imperfeccionValue,prom,varTipoPiel,v1,v2,v3,v4,v5,v6,v7,v8,v9,v1
 
     #_________________________________________________________________________
     c.setFont("Helvetica-Bold", 28)
-    c.setFillColorRGB(0.25,0.32,0.12,1)
+    c.setFillColorRGB(0,0,0,1)
     # c.drawString(190.93 * mm , 302.14 * mm, imperfeccionValue)
 
     def text_wrap(text, width):
@@ -455,8 +455,18 @@ def genPDFLocal(imperfeccionValue,prom,varTipoPiel,v1,v2,v3,v4,v5,v6,v7,v8,v9,v1
     text = rec2
     p = Paragraph(text, estilo)
 
-    p.wrapOn(c, 630, 500)
-    p.drawOn(c, 75, 375)
+    if (varTipoPiel == "Piel Seca-Sensible"):
+        p.wrapOn(c, 630, 100)
+        p.drawOn(c, 75, 375)
+    if ((varTipoPiel == "Piel Seca") or (varTipoPiel == "Piel Grasa") or (varTipoPiel == "Piel Grasa-Sensible")):
+        p.wrapOn(c, 630, 100)
+        p.drawOn(c, 75, 390)
+    if (varTipoPiel == "Piel Mixta"):
+        p.wrapOn(c, 630, 100)
+        p.drawOn(c, 75, 410)
+    if (varTipoPiel == "Piel Mixta-Sensible"):
+        p.wrapOn(c, 630, 100)
+        p.drawOn(c, 75, 375)
     #___________________________________________________________
     # Parrafo 2
     if (v10 == ""):
@@ -468,15 +478,26 @@ def genPDFLocal(imperfeccionValue,prom,varTipoPiel,v1,v2,v3,v4,v5,v6,v7,v8,v9,v1
 
     p = Paragraph(text, estilo)
 
-    p.wrapOn(c, 630, 500)
-    p.drawOn(c, 75, 245)
+    if ((varTipoPiel == "Piel Seca") or (varTipoPiel == "Piel Seca-Sensible") or (varTipoPiel == "Piel Grasa") or (varTipoPiel == "Piel Grasa-Sensible") or (varTipoPiel == "Piel Mixta") or (varTipoPiel == "Piel Mixta-Sensible")):
+        p.wrapOn(c, 630, 100)
+        p.drawOn(c, 75, 245)
     #___________________________________________________________
     # Parrafo 3
     text = rec
     p = Paragraph(text, estilo)
 
-    p.wrapOn(c, 630, 500)
-    p.drawOn(c, 75, 40)
+    if (varTipoPiel == "Piel Seca-Sensible"):
+        p.wrapOn(c, 630, 100)
+        p.drawOn(c, 75, 40)
+    if ((varTipoPiel == "Piel Seca") or (varTipoPiel == "Piel Grasa") or (varTipoPiel == "Piel Grasa-Sensible")):
+        p.wrapOn(c, 630, 100)
+        p.drawOn(c, 75, 90)
+    if (varTipoPiel == "Piel Mixta"):
+        p.wrapOn(c, 630, 100)
+        p.drawOn(c, 75, 110)
+    if (varTipoPiel == "Piel Mixta-Sensible"):
+        p.wrapOn(c, 630, 100)
+        p.drawOn(c, 75, 75)
     #___________________________________________________________
     c.showPage()
     c.save()
