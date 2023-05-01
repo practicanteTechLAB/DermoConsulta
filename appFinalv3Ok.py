@@ -364,7 +364,6 @@ def genPDFLocal(imperfeccionValue,prom,varTipoPiel,v1,v2,v3,v4,v5,v6,v7,v8,v9,v1
     #_________________________________________________________________________
     c.setFont("Helvetica-Bold", 28)
     c.setFillColorRGB(0,0,0,1)
-    # c.drawString(190.93 * mm , 302.14 * mm, imperfeccionValue)
 
     def text_wrap(text, width):
         lines = []
