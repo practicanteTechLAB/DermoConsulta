@@ -24,7 +24,7 @@ from reportlab.lib.units import mm
 from reportlab.lib.utils import simpleSplit
 
 application = Flask(__name__)
-run_with_ngrok(application,auth_token='2JptMb6IwVP0TlvTDfl77WG9pPl_4hAXcfFXxYqMEQ2RdN31e') # Linea para indicar que se arrancara el servidor con Ngrok
+run_with_ngrok(application,auth_token='2Jpdf1TR33XB22x6UojejhuqxVu_5qQPXAy7RprfXSfgCPcmD') # Linea para indicar que se arrancara el servidor con Ngrok
 
 @application.route("/send-image2/<path:url>", methods=['POST']) # Se asigna la direccion y se indica que admite el metodo POST
 def predictUrl(url):
